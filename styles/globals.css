@@ -4,6 +4,17 @@
 
 body {
     background: rgb(48, 57, 71);
-    background: linear-gradient(180deg, rgba(48, 57, 71, 1) 56%, rgba(91, 100, 119, 1) 73%, rgba(187, 190, 195, 1) 97%);
+    background: linear-gradient(180deg, #4f5765 56%, rgba(91, 100, 119, 1) 73%, rgba(187, 190, 195, 1) 97%);
     height: 100vh;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
