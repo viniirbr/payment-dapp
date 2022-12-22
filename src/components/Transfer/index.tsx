@@ -4,22 +4,29 @@ import { ArrowCircleDown } from 'phosphor-react'
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
+import transferMoney from "./transfer-money.json"
+import Lottie from 'lottie-react'
 
 function Transfer() {
     const { balance, sendPayment, loadingSendPayment } = useWallet();
     const [amount, setAmount] = useState<string>("");
     const [toAddress, setToAddress] = useState<string>("");
+    const [onSendSuccess, setOnSendSuccess] = useState(false);
 
     async function transferTokens(event: FormEvent) {
         event.preventDefault();
         const error = await sendPayment(Number(amount), toAddress);
-        setAmount("")
-        setToAddress("")
         if (error) {
             toast.error(error.message)
             return;
         }
+        setAmount("")
+        setToAddress("")
         toast.success("Transaction completed!")
+        setOnSendSuccess(true)
+        setTimeout(() => {
+            setOnSendSuccess(false);
+        }, 2000)
     }
     return (
         <div className='p-4 bg-[#303947] flex flex-col mx-3 box-border my-12 rounded-xl w-[100%] 
@@ -42,15 +49,18 @@ function Transfer() {
                     <input type="number" className='bg-transparent w-[50%] focus:outline-none text-right px-4 text-white
                 text-lg md:w-[70%] h-[100%]' value={amount} onChange={(e) => setAmount(e.target.value)} />
                 </div>
-                <ArrowCircleDown size={36} color="#fff" className='mb-2' />
+                {onSendSuccess ?
+                    <Lottie animationData={transferMoney} style={{ width: "80px" }} />
+                    :
+                    <ArrowCircleDown size={36} color="#fff" className='mb-2' />}
                 <div className='bg-[#4f5765] h-14 rounded-2xl flex items-center justify-between w-full mb-6'>
                     <input type="text" className='bg-transparent w-full focus:outline-none text-right px-4 text-white
                 text-lg h-[100%]' value={toAddress} onChange={(e) => setToAddress(e.target.value)} />
                 </div>
                 <button className='bg-[#33649c] hover:bg-[#234771] h-14 rounded-2xl w-full font-bold 
                 text-white transition-all duration-500 active:bg-[#558ac7] disabled:bg-gray-400' type='submit'
-                disabled={(amount==="" || toAddress==="") ? true : false}>
-                    {loadingSendPayment ? <BeatLoader color='white'/> : "Send"}
+                    disabled={(amount === "" || toAddress === "") ? true : false}>
+                    {loadingSendPayment ? <BeatLoader color='white' /> : "Send"}
                 </button>
             </form>
             <ToastContainer />
