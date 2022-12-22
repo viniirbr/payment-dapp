@@ -11,7 +11,6 @@ export const useWallet = () => {
     const [account, setAccount] = useState<string>("");
     const [paymentTokenContract, setPaymentTokenContract] = useState<any>()
     const [balance, setBalance] = useState<number | null>(null)
-    const [error, setError] = useState<Error | null | unknown>(null)
 
     useEffect(() => {
         const loadWallet = async () => {
@@ -19,6 +18,9 @@ export const useWallet = () => {
                 try {
                     const web3 = new Web3(Web3.givenProvider);
                     await web3.eth.requestAccounts()
+                    window.ethereum.on("accountsChanged", (accounts: any[]) => {
+                        setAccount(accounts[0])
+                    })
                     let allAccounts = await web3.eth.getAccounts();
                     setAccount(allAccounts[0]);
                     const paymentTokenData = PaymentToken.networks["80001"];
@@ -34,7 +36,7 @@ export const useWallet = () => {
                         }
                     }
                 } catch (error) {
-                    setError(error)
+                    return error
                 }
             }
         }
@@ -43,10 +45,8 @@ export const useWallet = () => {
 
     const sendPayment = async (amount: number, to: string) => {
         try {
-            // const web3 = new Web3(Web3.givenProvider);
-            // const amountInWei = web3.utils.toWei(amount, "ether")
             if (balance && balance < (amount)) {
-                throw ("You don't have enough tokens")
+                throw new Error("You don't have enough tokens")
             }
             await paymentTokenContract.methods
             .transfer(to, amount)
@@ -56,12 +56,12 @@ export const useWallet = () => {
             const bal = await paymentTokenContract.methods.balanceOf(account).call();
             setBalance(bal);
 
-        } catch (error) {
-            setError(error)
+        } catch (error: unknown) {
+            return error as Error
         }
     }
 
     return {
-        account, balance, paymentTokenContract, sendPayment, error
+        account, balance, paymentTokenContract, sendPayment
     }
 }

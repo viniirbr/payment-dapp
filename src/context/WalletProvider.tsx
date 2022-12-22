@@ -7,12 +7,11 @@ interface Props {
 }
 
 export const WalletProvider: FC<Props> = ({ children }: Props) => {
-    const { account, balance, paymentTokenContract, sendPayment, error } = useWallet();
+    const { account, balance, paymentTokenContract, sendPayment } = useWallet();
     return <WalletContext.Provider value={{
         account,
         balance,
         paymentTokenContract,
-        sendPayment,
-        error
+        sendPayment
     }}>{children}</WalletContext.Provider>
 } 

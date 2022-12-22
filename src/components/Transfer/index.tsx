@@ -1,17 +1,24 @@
 import React, { FormEvent, useState } from 'react'
-import { useWallet } from '../context/useWallet'
+import { useWallet } from '../../context/useWallet'
 import { ArrowCircleDown } from 'phosphor-react'
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 function Transfer() {
-    const { balance, sendPayment, error } = useWallet();
+    const { balance, sendPayment } = useWallet();
     const [amount, setAmount] = useState<string>("");
     const [toAddress, setToAddress] = useState<string>("");
 
     async function transferTokens(event: FormEvent) {
         event.preventDefault();
-        await sendPayment(Number(amount), toAddress);
+        const error = await sendPayment(Number(amount), toAddress);
         setAmount("")
         setToAddress("")
+        if (error) {
+            toast.error(error.message)
+            return;
+        }
+        toast.success("Transaction completed!")
     }
     return (
         <div className='p-4 bg-[#303947] flex flex-col mx-3 box-border my-12 rounded-xl w-[100%] 
@@ -40,10 +47,12 @@ function Transfer() {
                 text-lg h-[100%]' value={toAddress} onChange={(e) => setToAddress(e.target.value)} />
                 </div>
                 <button className='bg-[#33649c] hover:bg-[#234771] h-14 rounded-2xl w-full font-bold 
-                text-white transition-all duration-500 active:bg-[#558ac7]' type='submit'>
+                text-white transition-all duration-500 active:bg-[#558ac7] disabled:bg-gray-400' type='submit'
+                disabled={(amount==="" || toAddress==="") ? true : false}>
                     Send
                 </button>
             </form>
+            <ToastContainer />
         </div>
     )
 }
