@@ -5,6 +5,7 @@ interface WalletContextProps {
     balance: number|null,
     paymentTokenContract: any,
     sendPayment: (amount: number, to: string) => Promise<void | unknown>,
+    loadingSendPayment: boolean
 }
 
 export const WalletContext = createContext<WalletContextProps>({
@@ -12,4 +13,5 @@ export const WalletContext = createContext<WalletContextProps>({
     balance: null,
     paymentTokenContract: null,
     sendPayment: () => new Promise(() => {}),
+    loadingSendPayment: false
 })

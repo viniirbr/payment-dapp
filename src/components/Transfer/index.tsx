@@ -3,9 +3,10 @@ import { useWallet } from '../../context/useWallet'
 import { ArrowCircleDown } from 'phosphor-react'
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
+import { BeatLoader } from 'react-spinners';
 
 function Transfer() {
-    const { balance, sendPayment } = useWallet();
+    const { balance, sendPayment, loadingSendPayment } = useWallet();
     const [amount, setAmount] = useState<string>("");
     const [toAddress, setToAddress] = useState<string>("");
 
@@ -49,7 +50,7 @@ function Transfer() {
                 <button className='bg-[#33649c] hover:bg-[#234771] h-14 rounded-2xl w-full font-bold 
                 text-white transition-all duration-500 active:bg-[#558ac7] disabled:bg-gray-400' type='submit'
                 disabled={(amount==="" || toAddress==="") ? true : false}>
-                    Send
+                    {loadingSendPayment ? <BeatLoader color='white'/> : "Send"}
                 </button>
             </form>
             <ToastContainer />

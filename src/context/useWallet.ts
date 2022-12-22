@@ -11,6 +11,7 @@ export const useWallet = () => {
     const [account, setAccount] = useState<string>("");
     const [paymentTokenContract, setPaymentTokenContract] = useState<any>()
     const [balance, setBalance] = useState<number | null>(null)
+    const [loadingSendPayment, setLoadingSendPayment] = useState<boolean>(false);
 
     useEffect(() => {
         const loadWallet = async () => {
@@ -45,6 +46,7 @@ export const useWallet = () => {
 
     const sendPayment = async (amount: number, to: string) => {
         try {
+            setLoadingSendPayment(true);
             if (balance && balance < (amount)) {
                 throw new Error("You don't have enough tokens")
             }
@@ -58,10 +60,12 @@ export const useWallet = () => {
 
         } catch (error: unknown) {
             return error as Error
+        } finally {
+            setLoadingSendPayment(false);
         }
     }
 
     return {
-        account, balance, paymentTokenContract, sendPayment
+        account, balance, paymentTokenContract, sendPayment, loadingSendPayment
     }
 }
